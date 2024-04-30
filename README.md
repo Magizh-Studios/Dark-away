@@ -4,7 +4,7 @@
 
 # **Dark Away - Prototype**
 ## **Introduction:**
-Top down TPP Realistic Horror Game - Mobile.
+Top down Realistic Horror Game - Mobile.
 
 ## **Project Details:**
 3D URP - Unity Version 2022.3.20f1 LTS
