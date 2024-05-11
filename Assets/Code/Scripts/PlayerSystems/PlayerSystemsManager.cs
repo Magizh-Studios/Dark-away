@@ -30,6 +30,7 @@ namespace PlayerSystems
             CheckInteractables(toCheckInteractables);
         }
         public bool toCheckInteractables = true;
+        private bool toCheckCollectables = true;
         public InputManager inputManager;
     }
 }
