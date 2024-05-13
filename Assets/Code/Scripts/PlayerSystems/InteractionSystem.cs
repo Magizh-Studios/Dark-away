@@ -8,6 +8,8 @@ namespace PlayerSystems
 {
     public class InteractionSystem : System<InteractionSystem>
     {
+        [Range(-1f, 1f)]
+        [SerializeField] private float dotThreshold = 0.3f;
         private void Start()
         {
             inputManager.OnInteractTriggered += PerformInteract;
@@ -42,10 +44,14 @@ namespace PlayerSystems
             if (Status)
             {
                 var item = GetClosestItem<IInteractables>(interactables);
-                item?.Interact();
 
+                Vector3 itemPos = item.GetPosition();
+
+                if (Utility.GetDotProduct(transform.forward, itemPos) > dotThreshold)
+                    item?.Interact();
             }
         }
+
 
         private List<IInteractables> interactables;
     }

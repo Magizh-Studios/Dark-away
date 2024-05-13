@@ -6,31 +6,52 @@ namespace PlayerSystems
 {
     public class PlayerSystemsManager : MonoBehaviour
     {
-        public void CheckInteractables(bool status)
-        {
-            gameObject.AddComponent<InteractionSystem>();
-            var interactionSystem = InteractionSystem.Instance;
-            interactionSystem.Status = status;
-            interactionSystem.inputManager = inputManager;
-            interactionSystem.inputManager = inputManager;
-        }
+        public bool toCheckInteractables = true;
+        public bool toCheckCollectables = true;
+        public InputManager inputManager;
 
-        public void CheckCollectables(bool status)
-        {
-            gameObject.AddComponent<CollectableSystem>();
-
-            var collectionSystem = CollectableSystem.Instance;
-            collectionSystem.Status = status;
-            collectionSystem.inputManager = inputManager;
-        }
-
-        private void Start()
+        private void Awake()
         {
             CheckCollectables(toCheckCollectables);
             CheckInteractables(toCheckInteractables);
         }
-        public bool toCheckInteractables = true;
-        private bool toCheckCollectables = true;
-        public InputManager inputManager;
+
+        [ContextMenu("Toggle Interactables")]
+        public void ToggleInteract()
+        {
+            toCheckInteractables = !toCheckInteractables;
+            CheckInteractables(toCheckInteractables);
+        }
+        public void CheckInteractables(bool status)
+        {
+            if (!gameObject.TryGetComponent(out InteractionSystem _))
+            {
+                gameObject.AddComponent<InteractionSystem>();
+            }
+
+            InteractionSystem.Instance.Status = status;
+            InteractionSystem.Instance.inputManager = inputManager;
+        }
+
+        [ContextMenu("Toggle Collectables")]
+        public void ToggleCollect()
+        {
+            toCheckCollectables = !toCheckCollectables;
+            CheckCollectables(toCheckCollectables);
+        }
+
+        public void CheckCollectables(bool status)
+        {
+            if (!gameObject.TryGetComponent(out CollectableSystem _))
+            {
+                gameObject.AddComponent<CollectableSystem>();
+            }
+
+            CollectableSystem.Instance.Status = status;
+            CollectableSystem.Instance.inputManager = inputManager;
+
+        }
+
+
     }
 }
