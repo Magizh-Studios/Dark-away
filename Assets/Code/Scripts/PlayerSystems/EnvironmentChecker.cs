@@ -1,8 +1,10 @@
 using PlayerSystems.Collectables;
 using PlayerSystems.Interactables;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class EnvironmentChecker : SingletonBehavior<EnvironmentChecker>
 {
@@ -44,8 +46,6 @@ public class EnvironmentChecker : SingletonBehavior<EnvironmentChecker>
                 HandleCollectableChanges();
             }
         }
-
-
     }
 
 

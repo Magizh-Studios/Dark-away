@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace PlayerSystems
@@ -10,7 +11,7 @@ namespace PlayerSystems
         public bool toCheckCollectables = true;
         public InputManager inputManager;
 
-        private void Awake()
+        private void Start()
         {
             CheckCollectables(toCheckCollectables);
             CheckInteractables(toCheckInteractables);
@@ -22,22 +23,24 @@ namespace PlayerSystems
             toCheckInteractables = !toCheckInteractables;
             CheckInteractables(toCheckInteractables);
         }
-        public void CheckInteractables(bool status)
-        {
-            if (!gameObject.TryGetComponent(out InteractionSystem _))
-            {
-                gameObject.AddComponent<InteractionSystem>();
-            }
-
-            InteractionSystem.Instance.Status = status;
-            InteractionSystem.Instance.inputManager = inputManager;
-        }
 
         [ContextMenu("Toggle Collectables")]
         public void ToggleCollect()
         {
             toCheckCollectables = !toCheckCollectables;
             CheckCollectables(toCheckCollectables);
+        }
+
+        public void CheckInteractables(bool status)
+        {
+            if (!gameObject.TryGetComponent(out InteractionSystem _))
+            {
+                gameObject.AddComponent<InteractionSystem>();
+            }
+            var interactionSystem = InteractionSystem.Instance;
+            interactionSystem.Status = status;
+            interactionSystem.inputManager = inputManager;
+            interactionSystem.inputManager = inputManager;
         }
 
         public void CheckCollectables(bool status)
@@ -47,11 +50,9 @@ namespace PlayerSystems
                 gameObject.AddComponent<CollectableSystem>();
             }
 
-            CollectableSystem.Instance.Status = status;
-            CollectableSystem.Instance.inputManager = inputManager;
-
+            var collectionSystem = CollectableSystem.Instance;
+            collectionSystem.Status = status;
+            collectionSystem.inputManager = inputManager;
         }
-
-
     }
 }
