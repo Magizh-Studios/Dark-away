@@ -3,7 +3,6 @@
 ![License](https://badgen.net/badge/license/MIT/green)
 
 # **Dark Away - Prototype**
-## **Introduction:**
 Top down Realistic Horror Game - Mobile.
 
 ## **Project Details:**
