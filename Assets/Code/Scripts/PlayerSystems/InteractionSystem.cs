@@ -1,7 +1,9 @@
 using PlayerSystems.Collectables;
 using PlayerSystems.Interactables;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace PlayerSystems
@@ -12,6 +14,7 @@ namespace PlayerSystems
         [SerializeField] private float dotThreshold = 0.3f;
 
         private List<IInteractables> interactables;
+
         private void Start()
         {
             inputManager.OnInteractTriggered += PerformInteract;
@@ -51,8 +54,16 @@ namespace PlayerSystems
 
                 Vector3 itemPos = item.GetPosition();
 
-                if (Utils.GetDotProduct(transform.forward, itemPos) > dotThreshold)
-                    item?.Interact();
+                Vector3 directionToTarget = (itemPos - transform.position).normalized;
+
+                float dotProduct = Vector3.Dot(transform.forward, directionToTarget);
+
+                Debug.Log(dotProduct);
+
+                if (dotProduct > dotThreshold)
+                {
+                    item.Interact();
+                }
             }
         }
 
