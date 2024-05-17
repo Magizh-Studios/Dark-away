@@ -3,6 +3,6 @@ namespace PlayerSystems.Interactables
 {
     public interface IInteractables : IGetPosition
     {
-        public void Interact();
+       public void Interact();
     }
 }

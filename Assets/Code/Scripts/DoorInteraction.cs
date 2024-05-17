@@ -1,10 +1,5 @@
 using DG.Tweening;
-using PlayerSystems.Interactables;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class DoorInteraction : BaseInteractable
 {
@@ -16,10 +11,23 @@ public class DoorInteraction : BaseInteractable
     private void Start()
     {
         gameObject.layer = LayerMask.NameToLayer("Interactable");
+      
     }
 
     public override void Interact()
     {
+        EnvironmentChecker.Instance.OnInteractablesChanged += (interactables) =>
+        {
+            for (int i = 0; i < interactables.Count; i++)
+            {
+                if(interactables[i] is DoorInteraction)
+                {
+                    if(!isOpen)
+                    ToggleDoor();
+                }
+            }
+        };
+
         base.Interact();
         ToggleDoor();
     }
@@ -45,6 +53,7 @@ public class DoorInteraction : BaseInteractable
         transform.DOLocalRotate(toRotation, openSpeed, RotateMode.Fast).SetEase(easeMode);
 
     }
+
 }
 
 public enum DoorDirection

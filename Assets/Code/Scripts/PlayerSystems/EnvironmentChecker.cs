@@ -1,13 +1,22 @@
 using PlayerSystems.Collectables;
 using PlayerSystems.Interactables;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class EnvironmentChecker : SingletonBehavior<EnvironmentChecker>
 {
+    [SerializeField] private float interactRadius;
+    [SerializeField] private LayerMask interactableLayerMask;
+
+    private List<IInteractables> currentInteractables;
+    private List<ICollectables> currentCollectables;
+
+    public event Action<List<ICollectables>> OnCollectablesChanged;
+    public event Action<List<IInteractables>> OnInteractablesChanged;
+
+
+    private SphereCollider sphereCollider;
 
     private void Start()
     {
@@ -93,13 +102,6 @@ public class EnvironmentChecker : SingletonBehavior<EnvironmentChecker>
         HandleInteractableChanges();
     }
 
-    private List<IInteractables> currentInteractables;
-    private List<ICollectables> currentCollectables;
-
-    public event Action<List<ICollectables>> OnCollectablesChanged;
-    public event Action<List<IInteractables>> OnInteractablesChanged;
-
-    [SerializeField] private float interactRadius;
-
-    private SphereCollider sphereCollider;
+    public float GetInteractRadius() => interactRadius;
+    public int GetInteractLayers() => interactableLayerMask;
 }
