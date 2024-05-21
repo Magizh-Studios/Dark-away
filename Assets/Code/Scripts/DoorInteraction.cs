@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class DoorInteraction : BaseInteractable
 {
-    [SerializeField] private float openSpeed;
-    [SerializeField] private DoorDirection directionType;
-    [SerializeField] private Ease easeMode;
-    private bool isOpen;
+    [SerializeField] private float openSpeed = 1.75f;
+    [SerializeField] private DoorDirection directionType = DoorDirection.In;
+    [SerializeField] private Ease easeMode = Ease.InBack;
+    [SerializeField] private bool isOpen;
 
     private void Start()
     {
@@ -54,10 +54,9 @@ public class DoorInteraction : BaseInteractable
 
     }
 
-}
-
-public enum DoorDirection
-{
-    In,
-    Out
+    public enum DoorDirection
+    {
+        In,
+        Out
+    }
 }

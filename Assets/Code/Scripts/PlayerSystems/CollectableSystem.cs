@@ -40,7 +40,9 @@ namespace PlayerSystems
                 item?.Collect();
                 EnvironmentChecker.Instance.RemoveCollectableFromList(item);
 
-                //Add Item to Inventory Code Logics
+                //Add Find the CollectableItemSO associated
+                
+                //Add to Inventory
 
             }
         }

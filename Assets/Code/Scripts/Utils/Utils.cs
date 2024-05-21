@@ -3,12 +3,11 @@ using UnityEngine;
 public static class Utils
 {
 
-    public static float GetDotProduct(Vector3 vectorA, Vector3 vectorB)
+    public static float GetDotProduct(Vector3 itemPos, Vector3 targetForward, Vector3 targetPos)
     {
-        Vector3 direction = (vectorB - vectorA).normalized;
+        Vector3 directionToTarget = (itemPos - targetPos).normalized;
 
-        float dotProduct = Vector3.Dot(vectorA, direction);
-        Debug.Log(dotProduct);
+        float dotProduct = Vector3.Dot(targetForward, directionToTarget);
 
         return dotProduct;
 

@@ -5,10 +5,13 @@ using UnityEngine;
 
 public class CollectableItem : MonoBehaviour, ICollectables
 {
+
+    public CollectableItemSO itemData;
+
     public void Collect()
     {
 #if UNITY_EDITOR
-        Debug.Log($"Collected Object :{gameObject.name}");
+        Debug.Log($"Collected Object :{itemData.itemName}, Capacity Added:{itemData.capacity}");
 #endif
         Destroy(gameObject);
     }

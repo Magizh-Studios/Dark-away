@@ -11,7 +11,7 @@ namespace PlayerSystems
     public class InteractionSystem : System<InteractionSystem>
     {
         [Range(-1, 1)]
-        [SerializeField] private float dotThreshold = 0.3f;
+        [SerializeField] private float raycastHeight = 1f;
 
         private List<IInteractables> interactables;
 
@@ -70,20 +70,20 @@ namespace PlayerSystems
                 float interactRadius = EnvironmentChecker.Instance.GetInteractRadius();
                 int interactLayers = EnvironmentChecker.Instance.GetInteractLayers();
 
-                int colliderCounts = Physics.RaycastNonAlloc(transform.position + Vector3.up * 1.2f, transform.forward, raycastHits, interactRadius, interactLayers);
-                Debug.DrawRay(transform.position + Vector3.up * 1.2f, transform.forward /** interactRadius*/,Color.green);
+                int colliderCounts = Physics.RaycastNonAlloc(transform.position + Vector3.up * raycastHeight, transform.forward, raycastHits, interactRadius, interactLayers);
+                Debug.DrawRay(transform.position + Vector3.up * raycastHeight, transform.forward /** interactRadius*/, Color.green);
 
                 Debug.Log(colliderCounts);
 
-                if(colliderCounts > 0)
+                if (colliderCounts > 0)
                 {
                     foreach (RaycastHit hit in raycastHits)
                     {
-                        if(hit.collider != null)
+                        if (hit.collider != null)
                         {
                             Debug.Log($"Collider {hit.collider.gameObject.name}");
 
-                            if(hit.collider.gameObject.TryGetComponent(out IInteractables interactables))
+                            if (hit.collider.gameObject.TryGetComponent(out IInteractables interactables))
                             {
                                 interactables.Interact();
                             }
@@ -92,7 +92,7 @@ namespace PlayerSystems
                                 Debug.LogWarning("Iinteractabele Not exist");
                             }
                         }
-                       
+
                     }
                 }
             }
