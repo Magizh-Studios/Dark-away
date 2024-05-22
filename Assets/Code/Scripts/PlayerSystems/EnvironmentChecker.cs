@@ -99,7 +99,7 @@ public class EnvironmentChecker : SingletonBehavior<EnvironmentChecker>
     public void RemoveCollectableFromList(ICollectables item)
     {
         currentCollectables.Remove(item);
-        HandleInteractableChanges();
+        HandleCollectableChanges();
     }
 
     public float GetInteractRadius() => interactRadius;
