@@ -21,7 +21,7 @@ public class DialogueTriggerEditor : Editor
             EditorGUILayout.Space();
             dialogueTrigger.dialogueItem.dialogueText = EditorGUILayout.TextArea(dialogueTrigger.dialogueItem.dialogueText, EditorStyles.textArea);
             EditorGUILayout.Space();
-            dialogueTrigger.dialogueItem.textEaseMode = (Ease)EditorGUILayout.EnumPopup("Ease Mode",dialogueTrigger.dialogueItem.textEaseMode);
+            dialogueTrigger.dialogueItem.textEaseMode = (Ease)EditorGUILayout.EnumPopup("Ease Mode", dialogueTrigger.dialogueItem.textEaseMode);
         }
 
         if (GUI.changed)

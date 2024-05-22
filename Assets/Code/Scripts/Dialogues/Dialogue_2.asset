@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 991064405c5c5eb43ba45bc6ff8c77cb, type: 3}
   m_Name: Dialogue_2
   m_EditorClassIdentifier: 
-  dialogueText: I could see a path way...
   duration: 2
+  textEaseMode: 1

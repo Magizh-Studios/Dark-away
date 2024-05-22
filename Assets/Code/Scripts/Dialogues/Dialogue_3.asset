@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueText: A Junction???. What is the way to Village?
   duration: 3
+  textEaseMode: 1
