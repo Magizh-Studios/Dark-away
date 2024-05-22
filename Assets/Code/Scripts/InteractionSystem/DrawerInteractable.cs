@@ -67,7 +67,7 @@ public class DrawerInteractable : BaseInteractable
     private void OnToggle()
     {
         if (curItems.Length > 0)
-            Invoke("SetObjectState", openSpeed / 2f);
+            Invoke(nameof(SetObjectState), openSpeed / 2f);
     }
 
     void SetObjectState()

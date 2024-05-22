@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
@@ -13,7 +12,7 @@ public class DialogUiHandler : SingletonBehavior<DialogUiHandler>
         //StartCoroutine(DisplayDialogueFor(dialogueItem.dialogueText, dialogueItem.duration));
         SetActiveDialogueObject(true);
         SetDialogue(string.Empty);
-        DisplayDialogueFor(dialogueItem.dialogueText, dialogueItem.duration);
+        DisplayDialogueFor(dialogueItem.dialogueText, dialogueItem.duration,dialogueItem.textEaseMode);
     }
 
     //IEnumerator DisplayDialogueFor(string dialogue, float duration)
@@ -28,13 +27,16 @@ public class DialogUiHandler : SingletonBehavior<DialogUiHandler>
 
 
 
-    private void DisplayDialogueFor(string dialogue, float duration)
+    private void DisplayDialogueFor(string dialogue, float duration,Ease textEaseMode = Ease.Linear)
     {
         float textDuration = (dialogue.Length / duration) * typeSpeed;
 
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(dialogueHolder.DOText(dialogue, textDuration).SetEase(Ease.Linear));
+
+        sequence.Append(dialogueHolder.DOText(dialogue, textDuration).SetEase(textEaseMode));
+
         sequence.AppendInterval(duration); // Add delay after text animation completes
+
         sequence.OnComplete(() => {
             SetActiveDialogueObject(false);
         });
