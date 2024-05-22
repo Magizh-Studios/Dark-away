@@ -46,57 +46,58 @@ namespace PlayerSystems
 
         public void PerformInteract()
         {
-            if (Status)
+            if (!Status)
+                return;
+
+            if (interactables.Count <= 0)
+                return;
+
+            //if (item == null) return;
+
+            //Vector3 itemPos = item.GetPosition();
+
+            //Vector3 directionToTarget = (itemPos - transform.position).normalized;
+
+            //float dotProduct = Vector3.Dot(transform.forward, directionToTarget);
+
+            //Debug.Log(dotProduct);
+
+            //if (dotProduct > dotThreshold)
+            //{
+            //    item.Interact();
+            //}
+
+            RaycastHit[] raycastHits = new RaycastHit[5];
+
+            float interactRadius = EnvironmentChecker.Instance.GetInteractRadius();
+            int interactLayers = EnvironmentChecker.Instance.GetInteractLayers();
+
+            int colliderCounts = Physics.RaycastNonAlloc(transform.position + Vector3.up * raycastHeight, transform.forward, raycastHits, interactRadius, interactLayers);
+
+            Debug.DrawRay(transform.position + Vector3.up * raycastHeight, transform.forward /** interactRadius*/, Color.green);
+
+            Debug.Log(colliderCounts);
+
+            if (colliderCounts <= 0)
+                return;
+
+            foreach (RaycastHit hit in raycastHits)
             {
-                //var item = GetClosestItem(interactables);
+                if (hit.collider == null)
+                    continue;
 
-                //if (item == null) return;
+                Debug.Log($"Collider {hit.collider.gameObject.name}");
 
-                //Vector3 itemPos = item.GetPosition();
-
-                //Vector3 directionToTarget = (itemPos - transform.position).normalized;
-
-                //float dotProduct = Vector3.Dot(transform.forward, directionToTarget);
-
-                //Debug.Log(dotProduct);
-
-                //if (dotProduct > dotThreshold)
-                //{
-                //    item.Interact();
-                //}
-
-                RaycastHit[] raycastHits = new RaycastHit[5];
-
-                float interactRadius = EnvironmentChecker.Instance.GetInteractRadius();
-                int interactLayers = EnvironmentChecker.Instance.GetInteractLayers();
-
-                int colliderCounts = Physics.RaycastNonAlloc(transform.position + Vector3.up * raycastHeight, transform.forward, raycastHits, interactRadius, interactLayers);
-                Debug.DrawRay(transform.position + Vector3.up * raycastHeight, transform.forward /** interactRadius*/, Color.green);
-
-                Debug.Log(colliderCounts);
-
-                if (colliderCounts > 0)
+                if (hit.collider.gameObject.TryGetComponent(out IInteractables interactables))
                 {
-                    foreach (RaycastHit hit in raycastHits)
-                    {
-                        if (hit.collider != null)
-                        {
-                            Debug.Log($"Collider {hit.collider.gameObject.name}");
-
-                            if (hit.collider.gameObject.TryGetComponent(out IInteractables interactables))
-                            {
-                                interactables.Interact();
-                            }
-                            else
-                            {
-                                Debug.LogWarning("Iinteractabele Not exist");
-                            }
-                        }
-
-                    }
+                    interactables.Interact();
                 }
+                //else
+                //{
+                //    Debug.LogWarning("Iinteractabele Not exist");
+                //}
             }
-        }
 
+        }
     }
 }

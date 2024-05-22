@@ -46,5 +46,12 @@ public abstract class System<T> : SingletonBehavior<T> where T : MonoBehaviour
     }
 
     private bool _status = true;
-    public InputManager inputManager;
+    protected InputManager inputManager;
+
+
+    public void SetInputManager(InputManager manager)
+    {
+        this.inputManager = manager;
+    }
+
 }

@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueText: I need to find a Way to the Dhokapur Village !!!
   duration: 10
-  textEaseMode: 25
+  textEaseMode: 1

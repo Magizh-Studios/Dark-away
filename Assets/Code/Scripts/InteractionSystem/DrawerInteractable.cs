@@ -72,8 +72,11 @@ public class DrawerInteractable : BaseInteractable
 
     void SetObjectState()
     {
+
         foreach (var item in curItems)
         {
+            if (item == null)
+                continue;
             item?.SetActive(isOpen);
         }
     }

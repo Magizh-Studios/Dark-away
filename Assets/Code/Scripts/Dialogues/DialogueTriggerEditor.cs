@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -19,6 +20,8 @@ public class DialogueTriggerEditor : Editor
             dialogueTrigger.dialogueItem.duration = EditorGUILayout.FloatField("Duration (S)", dialogueTrigger.dialogueItem.duration);
             EditorGUILayout.Space();
             dialogueTrigger.dialogueItem.dialogueText = EditorGUILayout.TextArea(dialogueTrigger.dialogueItem.dialogueText, EditorStyles.textArea);
+            EditorGUILayout.Space();
+            dialogueTrigger.dialogueItem.textEaseMode = (Ease)EditorGUILayout.EnumPopup("Ease Mode",dialogueTrigger.dialogueItem.textEaseMode);
         }
 
         if (GUI.changed)

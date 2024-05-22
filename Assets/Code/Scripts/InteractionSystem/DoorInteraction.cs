@@ -11,25 +11,19 @@ public class DoorInteraction : BaseInteractable
     private void Start()
     {
         gameObject.layer = LayerMask.NameToLayer("Interactable");
-      
+
     }
 
     public override void Interact()
     {
-        EnvironmentChecker.Instance.OnInteractablesChanged += (interactables) =>
-        {
-            for (int i = 0; i < interactables.Count; i++)
-            {
-                if(interactables[i] is DoorInteraction)
-                {
-                    if(!isOpen)
-                    ToggleDoor();
-                }
-            }
-        };
-
         base.Interact();
         ToggleDoor();
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (isOpen)
+            ToggleDoor();
     }
 
     private void ToggleDoor()

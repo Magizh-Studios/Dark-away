@@ -39,8 +39,7 @@ namespace PlayerSystems
             }
             var interactionSystem = InteractionSystem.Instance;
             interactionSystem.Status = status;
-            interactionSystem.inputManager = inputManager;
-            interactionSystem.inputManager = inputManager;
+            interactionSystem.SetInputManager(inputManager);
         }
 
         public void CheckCollectables(bool status)
@@ -52,7 +51,7 @@ namespace PlayerSystems
 
             var collectionSystem = CollectableSystem.Instance;
             collectionSystem.Status = status;
-            collectionSystem.inputManager = inputManager;
+            collectionSystem.SetInputManager(inputManager);
         }
     }
 }

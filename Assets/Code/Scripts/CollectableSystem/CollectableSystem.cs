@@ -41,13 +41,13 @@ namespace PlayerSystems
                 EnvironmentChecker.Instance.RemoveCollectableFromList(item);
 
                 //Add Find the CollectableItemSO associated
-                
+
                 //Add to Inventory
 
             }
         }
 
         [SerializeField] private List<ICollectables> collectables = new List<ICollectables>();
-        
+
     }
 }
