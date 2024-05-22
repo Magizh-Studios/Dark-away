@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Dialogue_2
   m_EditorClassIdentifier: 
   dialogueText: I could see a path way...
-  duration: 10
+  duration: 2

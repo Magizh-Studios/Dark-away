@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Dialogue_4
   m_EditorClassIdentifier: 
   dialogueText: Yeah we have reached the Village!.
-  duration: 10
+  duration: 3
