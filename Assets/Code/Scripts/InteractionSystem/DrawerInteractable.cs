@@ -79,6 +79,7 @@ public class DrawerInteractable : BaseInteractable
                 continue;
             item?.SetActive(isOpen);
         }
+        EnvironmentChecker.Instance.HandleCollectableChanges();
     }
 
 

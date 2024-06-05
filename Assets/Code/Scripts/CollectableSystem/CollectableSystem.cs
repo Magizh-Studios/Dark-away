@@ -37,8 +37,9 @@ namespace PlayerSystems
             if (Status)
             {
                 var item = GetClosestItem<ICollectables>(collectables);
+
                 item?.Collect();
-                EnvironmentChecker.Instance.RemoveCollectableFromList(item);
+                
 
                 //Add Find the CollectableItemSO associated
 

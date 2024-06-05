@@ -2,6 +2,7 @@ using PlayerSystems.Collectables;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +15,7 @@ public class UiManager : MonoBehaviour
     private void Start()
     {
         EnvironmentChecker.Instance.OnInteractablesChanged += (x) => SetInteractState(x.Count > 0);
-        EnvironmentChecker.Instance.OnCollectablesChanged += (x) => SetCollectState(x.Count > 0);
+        EnvironmentChecker.Instance.OnCollectablesChanged += (x) => SetCollectState(x.Count > 0 && x.FirstOrDefault().canCollect);
     }
 
     public void SetInteractState(bool state)
