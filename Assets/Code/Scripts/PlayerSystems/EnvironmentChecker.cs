@@ -102,6 +102,12 @@ public class EnvironmentChecker : SingletonBehavior<EnvironmentChecker>
         HandleCollectableChanges();
     }
 
+    public void AddCollectableToList(ICollectables item)
+    {
+        currentCollectables.Add(item);
+        HandleCollectableChanges();
+    }
+
     public float GetInteractRadius() => interactRadius;
     public int GetInteractLayers() => interactableLayerMask;
 }
