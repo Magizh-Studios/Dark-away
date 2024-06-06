@@ -10,7 +10,7 @@ public class UiManager : MonoBehaviour
 {
     [SerializeField] private Button interactBtn;
     [SerializeField] private Button collectBtn;
-
+    [SerializeField] private Slider fuelSlider;
 
     private void Start()
     {
@@ -28,5 +28,21 @@ public class UiManager : MonoBehaviour
         collectBtn.gameObject.SetActive(state);
     }
 
+
+
+    private void Update()
+    {
+        if (interactBtn.enabled || collectBtn.enabled)
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
+
+        if (EquipHandler.Instance.curLightSource != null)
+        {
+            BaseLightSource source = EquipHandler.Instance.curLightSource;
+            fuelSlider.value = source.GetCurrenFuelAmount();
+        }
+
+    }
 
 }

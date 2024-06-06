@@ -1,16 +1,13 @@
 using PlayerSystems.Collectables;
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class CollectableItem : MonoBehaviour, ICollectables
 {
+    public static event Predicate<CollectableItemSO> OnPlayerTryPickUpGatherableObject;
 
-    public CollectableItemSO itemData;
-
+    [SerializeField] private CollectableItemSO collectableItemSo;
     public bool canCollect { get; set; }
-
     private void OnEnable()
     {
         canCollect = true;
@@ -23,19 +20,24 @@ public class CollectableItem : MonoBehaviour, ICollectables
         GetComponent<Collider>().enabled = false;
     }
 
+
     public void Collect()
     {
-#if UNITY_EDITOR
-        Debug.Log($"Collected Object :{itemData.itemName}, Capacity Added:{itemData.capacity}");
-#endif
-        Destroy(gameObject);
-        EnvironmentChecker.Instance.RemoveCollectableFromList(this);
+        var isPicked = OnPlayerTryPickUpGatherableObject?.Invoke(collectableItemSo);
+
+        if (isPicked.Value == true)
+        {
+            Destroy(gameObject);
+            EnvironmentChecker.Instance.RemoveCollectableFromList(this);
+        }
+        else
+        {
+            Debug.LogWarning($"Inventory Cant Accept Item : {collectableItemSo.itemName}");
+        }
     }
 
     public Vector3 GetPosition()
     {
         return transform.position;
     }
-
-
 }

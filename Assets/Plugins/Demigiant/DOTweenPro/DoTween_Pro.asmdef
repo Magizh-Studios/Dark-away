@@ -1,0 +1,16 @@
+{
+    "name": "DoTween_Pro",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c05d0582b1b7210479a321957fcc0477"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

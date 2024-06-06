@@ -10,6 +10,8 @@ public class PlayerSystemsManagerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
+
+        base.OnInspectorGUI();
         PlayerSystemsManager manager = (PlayerSystemsManager)target;
 
 
