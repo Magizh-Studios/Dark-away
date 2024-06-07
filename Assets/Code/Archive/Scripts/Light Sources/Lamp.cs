@@ -4,7 +4,6 @@ using UnityEngine.AI;
 
 public class Lamp : BaseLightSource, IInteractables, IHoldable
 {
-    [SerializeField] private InteractionIndigationUi indigationUi;
     [SerializeField] private NavMeshObstacle navMeshObstacle;
     public Transform GetHoldableObject()
     {
@@ -33,11 +32,9 @@ public class Lamp : BaseLightSource, IInteractables, IHoldable
         {
             equipHandler.SetHoldingObject(this);
             Debug.Log("Lamp Picked");
-            
         }
 
     }
-
 
     public Vector3 GetPosition()
     {

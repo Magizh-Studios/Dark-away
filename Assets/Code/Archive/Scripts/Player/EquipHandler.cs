@@ -22,6 +22,20 @@ public class EquipHandler : MonoBehaviour
 
         //InputManager.Instance.OnThrowKeyPerformed += InputManager_OnThrowKeyPerformed; // Can Be Refactorable, Future In ObjectHolder.
         InputManager.Instance.OnDropKeyPerformed += InputManager_OnDropKeyPerformed;
+        UiManager.Instance.OnlightTogglePerformed += UiManager_Instance_OnlightTogglePerformed;
+    }
+
+    private void UiManager_Instance_OnlightTogglePerformed(object sender, UiManager.OnlightTogglePerformedArgs e) {
+        if(e.OnlightTogglePerformed) {
+            //light Source Should On
+            if(curLightSource != null) {
+                curLightSource.SetWorkingState(true);
+            }
+        }
+        else {
+            //light Source Should Off
+            curLightSource.SetWorkingState(false);
+        }
     }
 
     private void InputManager_OnDropKeyPerformed(object sender, EventArgs e)
@@ -62,8 +76,13 @@ public class EquipHandler : MonoBehaviour
         else
         {
             holdingObjectTransform.SetParent(null);
+
             PlayerIk.Instance.SetHoldingObject(null);
+
+            curLightSource.SetWorkingState(false);
+
             curLightSource = null;
+
             OnPlayerHoldingObject?.Invoke(null);
         }
 

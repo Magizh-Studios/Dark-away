@@ -18,6 +18,7 @@ public abstract class BaseLightSource : MonoBehaviour
     protected float lightMaxIntencity;
     protected float colliderMaxRadius;
     protected bool isWorking = false;
+    protected bool CanUse = false;
 
     protected bool isPlayerInsideSafeZone = false;
 
@@ -50,6 +51,8 @@ public abstract class BaseLightSource : MonoBehaviour
 
     protected virtual void UpdateColliderRadius()
     {
+        if (!CanUse) return;
+
         float radiusPercentage = currentFuelAmount / FUEL_CAPACITY_MAX;
         float newRadius = radiusPercentage * colliderMaxRadius;
         newRadius = Mathf.Max(newRadius, 0f);
@@ -60,7 +63,7 @@ public abstract class BaseLightSource : MonoBehaviour
     {
         isWorking = currentFuelAmount > 0;
 
-        if (isWorking)
+        if (isWorking && CanUse)
         {
             DecreaseFuel(fuelDecreaseSpeed * Time.deltaTime);
         }
@@ -70,6 +73,8 @@ public abstract class BaseLightSource : MonoBehaviour
 
     protected virtual void UpdateLightVisual()
     {
+        lightSource.enabled = CanUse;
+        
         // Calculate the intensity percentage based on the current fuel amount
         float intensityPercentage = currentFuelAmount / FUEL_CAPACITY_MAX;
 
@@ -96,7 +101,7 @@ public abstract class BaseLightSource : MonoBehaviour
 
     protected virtual void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out Player player))
+        if (other.gameObject.TryGetComponent(out Player player) && CanUse)
         {
             // Player Inside Safe Area
             player.SetSafeZoneMode(true);
@@ -106,7 +111,7 @@ public abstract class BaseLightSource : MonoBehaviour
 
     protected virtual void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out Player player))
+        if (other.gameObject.TryGetComponent(out Player player) && CanUse)
         {
             // Player Out Of Safe Area
             player.SetSafeZoneMode(false);
@@ -118,5 +123,9 @@ public abstract class BaseLightSource : MonoBehaviour
     {
         Gizmos.color = !isPlayerInsideSafeZone ? Color.green : Color.magenta;
         Gizmos.DrawWireSphere(transform.position, affectRadius);
+    }
+
+    public void SetWorkingState(bool workingStateValue) {
+        CanUse = workingStateValue;
     }
 }
