@@ -19,20 +19,25 @@ public class EquipHandler : MonoBehaviour
     private void Start()
     {
         curLightSource = Torch.Instance;
+        curLightSource.SetWorkingState(true);
 
         //InputManager.Instance.OnThrowKeyPerformed += InputManager_OnThrowKeyPerformed; // Can Be Refactorable, Future In ObjectHolder.
         InputManager.Instance.OnDropKeyPerformed += InputManager_OnDropKeyPerformed;
         UiManager.Instance.OnlightTogglePerformed += UiManager_Instance_OnlightTogglePerformed;
     }
 
-    private void UiManager_Instance_OnlightTogglePerformed(object sender, UiManager.OnlightTogglePerformedArgs e) {
-        if(e.OnlightTogglePerformed) {
+    private void UiManager_Instance_OnlightTogglePerformed(object sender, UiManager.OnlightTogglePerformedArgs e)
+    {
+        if (e.OnlightTogglePerformed)
+        {
             //light Source Should On
-            if(curLightSource != null) {
+            if (curLightSource != null)
+            {
                 curLightSource.SetWorkingState(true);
             }
         }
-        else {
+        else
+        {
             //light Source Should Off
             curLightSource.SetWorkingState(false);
         }
