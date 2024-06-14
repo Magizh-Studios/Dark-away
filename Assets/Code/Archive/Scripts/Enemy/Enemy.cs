@@ -33,7 +33,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
     {
         if(enemyScared)
         {
-            stateMachine.SetState(scaredState);
+            stateMachine?.SetState(scaredState);
         }
     }
 
