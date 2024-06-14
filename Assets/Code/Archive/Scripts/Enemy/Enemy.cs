@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,7 +19,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
         set
         {
             isAffectedByLight = value;
-            EnemyScared(isAffectedByLight);
+            //EnemyScared(isAffectedByLight);
         }
     }
 
@@ -70,6 +71,9 @@ public class Enemy : MonoBehaviour, ILightAffectable
         IsAffectedByLight = isCaught;
     }
 
+    public bool IsCrawling() => agent.velocity.magnitude > 0;
+
+    [Serializable]
     private class IdleState : IState
     {
         private Enemy enemy;
@@ -95,6 +99,8 @@ public class Enemy : MonoBehaviour, ILightAffectable
         }
     }
 
+
+    [Serializable]
     private class PatrolState : IState
     {
         private Enemy enemy;
@@ -154,6 +160,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
         }
     }
 
+    [Serializable]
     private class ChasingState : IState
     {
         private Enemy enemy;
@@ -189,7 +196,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
             if (enemy.agent.remainingDistance < enemy.attackRadius)
             {
                 Debug.Log("Reached Target need To Change attack State");
-                enemy.stateMachine.SetState(enemy.attackState);
+                //enemy.stateMachine.SetState(enemy.attackState);
             }
 
             float distance = Vector3.Distance(enemy.transform.position, target.position);
@@ -207,6 +214,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
         }
     }
 
+    [Serializable]
     private class AttackState : IState
     {
         private Enemy enemy;
@@ -252,6 +260,8 @@ public class Enemy : MonoBehaviour, ILightAffectable
         }
     }
 
+
+    [Serializable]
     private class ScaredState : IState
     {
         private Enemy enemy;
@@ -265,17 +275,17 @@ public class Enemy : MonoBehaviour, ILightAffectable
             Debug.Log("Enemy Scared State");
             enemy.agent.speed = 8;
 
-            enemy.agent.SetDestination(GetValidHidePointPosition());
+            //enemy.agent.SetDestination(GetValidHidePointPosition());
         }
 
-        private Vector3 GetValidHidePointPosition()
-        {
-            HidePoint hidePoint = HidePointManager.Instance.GetNearHidePointOutPlayerFov();
+        //private Vector3 GetValidHidePointPosition()
+        //{
+            //HidePoint hidePoint = HidePointManager.Instance.GetNearHidePointOutPlayerFov();
             
-            NavMesh.SamplePosition(hidePoint.transform.position, out NavMeshHit hit, 1f, NavMesh.AllAreas);
+            //NavMesh.SamplePosition(hidePoint.transform.position, out NavMeshHit hit, 1f, NavMesh.AllAreas);
 
-            return hit.position;
-        }
+            //return hit.position;
+        //}
 
         public void Update()
         {
@@ -291,6 +301,8 @@ public class Enemy : MonoBehaviour, ILightAffectable
         }
     }
 
+
+    [Serializable]
     private class WaitingForTimeState : IState
     {
         private const float chaseTorchRadius = 2f;
