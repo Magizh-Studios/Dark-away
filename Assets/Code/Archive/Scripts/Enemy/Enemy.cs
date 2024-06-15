@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
     public float attackRadius = 1f;
     public float patrolRadius = 10f;
     public float sightRadius = 5f;
+    public LayerMask sightLayer;
 
     private NavMeshAgent agent;
 
@@ -77,6 +78,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
     private class IdleState : IState
     {
         private Enemy enemy;
+        protected Collider[] colliders = new Collider[5];
 
         internal IdleState(Enemy enemy)
         {
@@ -90,7 +92,19 @@ public class Enemy : MonoBehaviour, ILightAffectable
 
         public void Update()
         {
-           
+            int colliderCount = Physics.OverlapSphereNonAlloc(enemy.transform.position, enemy.sightRadius, colliders,enemy.sightLayer);
+
+            if (colliderCount > 0) {
+
+                for (int i = 0; i < colliderCount; i++)
+                {
+                    if(colliders[i].gameObject.TryGetComponent(out Player _)) {
+                        // Player Entered Radius
+                        enemy.stateMachine.SetState(enemy.chasingState);
+                    }
+                }
+                
+            }
         }
 
         public void Exit()
@@ -202,8 +216,8 @@ public class Enemy : MonoBehaviour, ILightAffectable
             float distance = Vector3.Distance(enemy.transform.position, target.position);
             if(distance >= enemy.sightRadius)
             {
-                //enemy.agent.SetDestination(enemy.transform.position);
-                //enemy.stateMachine.SetState(new PatrolState(enemy));
+                  enemy.agent.SetDestination(enemy.transform.position);
+                  enemy.stateMachine.SetState(enemy.idleState);
             }
 
         }
