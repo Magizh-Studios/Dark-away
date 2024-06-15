@@ -9,6 +9,11 @@ public class Enemy : MonoBehaviour, ILightAffectable
     public float attackRadius = 1f;
     public float patrolRadius = 10f;
     public float sightRadius = 5f;
+
+    public float enemySpeed = 5f;
+    public float enemySprintSpeed = 10f;
+    public float slowDownDistanceThreshold = 5;
+
     public LayerMask sightLayer;
 
     private NavMeshAgent agent;
@@ -73,6 +78,9 @@ public class Enemy : MonoBehaviour, ILightAffectable
     }
 
     public bool IsCrawling() => agent.velocity.magnitude > 0;
+
+    public float GetCurrentSpeed() => agent.velocity.magnitude;
+    public float GetSprintSpeed() => enemySprintSpeed;
 
     [Serializable]
     private class IdleState : IState
@@ -175,56 +183,53 @@ public class Enemy : MonoBehaviour, ILightAffectable
     }
 
     [Serializable]
-    private class ChasingState : IState
-    {
+    private class ChasingState : IState {
         private Enemy enemy;
         private Transform target = null;
 
         private float timer = 0;
         private float timerMax = 0.5f;
-        public ChasingState(Enemy enemy)
-        {
+
+        public ChasingState(Enemy enemy) {
             this.enemy = enemy;
             target = null;
+            enemy.agent.speed = enemy.enemySprintSpeed;
         }
-        public void Enter()
-        {
+        public void Enter() {
             Debug.Log("Enemy Entered Chasing State");
-        }         
-        public void Update()
-        {
-            if (target == null)
-            {
+        }
+        public void Update() {
+            if (target == null) {
                 target = enemy.playerTransform;
                 enemy.agent.SetDestination(target.position);
             }
 
             timer += Time.deltaTime;
-            if (timer > timerMax)
-            {
+            if (timer > timerMax) {
                 enemy.agent.SetDestination(target.position);
                 timer = 0;
             }
 
-            //Debug.Log($"Robo to body Dis {owner.agent.remainingDistance}");
-            if (enemy.agent.remainingDistance < enemy.attackRadius)
-            {
+            float distance = Vector3.Distance(enemy.transform.position, target.position);
+            if (distance < enemy.slowDownDistanceThreshold) {
+                // Calculate the speed based on the distance to the target
+                float lerpedSpeed = Mathf.Lerp(0, enemy.enemySprintSpeed, distance / enemy.slowDownDistanceThreshold);
+                enemy.agent.speed = lerpedSpeed;
+            }
+
+            if (enemy.agent.remainingDistance < enemy.attackRadius) {
                 Debug.Log("Reached Target need To Change attack State");
                 //enemy.stateMachine.SetState(enemy.attackState);
             }
 
-            float distance = Vector3.Distance(enemy.transform.position, target.position);
-            if(distance >= enemy.sightRadius)
-            {
-                  enemy.agent.SetDestination(enemy.transform.position);
-                  enemy.stateMachine.SetState(enemy.idleState);
+            if (distance >= enemy.sightRadius) {
+                enemy.agent.SetDestination(enemy.transform.position);
+                enemy.stateMachine.SetState(enemy.idleState);
             }
-
         }
 
-        public void Exit()
-        {
-
+        public void Exit() {
+            enemy.agent.speed = enemy.enemySpeed;
         }
     }
 

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyAnimation : MonoBehaviour
 {
-    private const string CRAWLING = "IsCrawling";
+    private const string SPEED_BLEND = "Speed";
     private Enemy enemy;
     private Animator animator;
 
@@ -12,6 +12,6 @@ public class EnemyAnimation : MonoBehaviour
     }
 
     private void Update() {
-        animator.SetBool(CRAWLING, enemy.IsCrawling());
+        animator.SetFloat(SPEED_BLEND, Mathf.Clamp01(enemy.GetCurrentSpeed() / enemy.GetSprintSpeed()));
     }
 }
