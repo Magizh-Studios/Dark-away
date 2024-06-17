@@ -48,14 +48,6 @@ namespace Micosmo.SensorToolkit
             }
         }
 
-        private void Update()
-        {
-            if (mc != null)
-            {
-                CreateCollider();
-            }
-        }
-
         public void CreateCollider() {
             pts = new Vector3[4 + (2+Resolution)*(2+Resolution)];
             // There are 2 triangles on the base

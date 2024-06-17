@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
     public float patrolRadius = 10f;
     public float sightRadius = 5f;
 
-    public float enemySpeed = 5f;
+    public float enemyNormalSpeed = 5f;
     public float enemySprintSpeed = 10f;
     public float slowDownDistanceThreshold = 5;
 
@@ -25,7 +25,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
         set
         {
             isAffectedByLight = value;
-            //EnemyScared(isAffectedByLight);
+            EnemyScared(isAffectedByLight);
         }
     }
 
@@ -64,17 +64,12 @@ public class Enemy : MonoBehaviour, ILightAffectable
     private void InitializeStateMachine()
     {
         stateMachine = new StateMachine();
-        stateMachine.SetState(chasingState); // This One Called Enter State And Also Exit
+        stateMachine?.SetState(chasingState); // This One Called Enter State And Also Exit
     }
 
     protected void Update()
     {
         stateMachine?.Update();                // This One Called frame Per Second Keep Updating State MAchin's Upadete State
-    }
-
-    public void SetCaughtByLight(bool isCaught)
-    {
-        IsAffectedByLight = isCaught;
     }
 
     public bool IsCrawling() => agent.velocity.magnitude > 0;
@@ -229,7 +224,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
         }
 
         public void Exit() {
-            enemy.agent.speed = enemy.enemySpeed;
+            enemy.agent.speed = enemy.enemyNormalSpeed;
         }
     }
 
@@ -292,8 +287,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
         public void Enter()
         {
             Debug.Log("Enemy Scared State");
-            enemy.agent.speed = 8;
-
+            enemy.agent.speed = enemy.enemySprintSpeed;
             //enemy.agent.SetDestination(GetValidHidePointPosition());
         }
 
@@ -308,15 +302,19 @@ public class Enemy : MonoBehaviour, ILightAffectable
 
         public void Update()
         {
-            if (enemy.agent.remainingDistance < 1f)
-            {
-                enemy.stateMachine.SetState(enemy.waitingForTimeState);
+            //if (enemy.agent.remainingDistance < 1f)
+            //{
+            //    enemy.stateMachine.SetState(enemy.waitingForTimeState);
+            //}
+
+            if(!enemy.isAffectedByLight) {
+                enemy.stateMachine.SetState(enemy.idleState);
             }
         }
 
         public void Exit()
         {
-            enemy.agent.speed = 3.5f;
+            enemy.agent.speed = enemy.enemyNormalSpeed;
         }
     }
 

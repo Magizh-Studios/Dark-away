@@ -1,5 +1,6 @@
 
 using Micosmo.SensorToolkit;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Torch : BaseLightSource,IHoldable
@@ -75,18 +76,14 @@ public class Torch : BaseLightSource,IHoldable
         return transform;
     }
 
-    protected override void OnTriggerStay(Collider other)
-    {
-        if (other.gameObject.TryGetComponent(out ILightAffectable lightAffectable))
-        {
+    protected override void OnTriggerStay(Collider other) {
+        if (other.gameObject.TryGetComponent(out ILightAffectable lightAffectable)) {
             lightAffectable.IsAffectedByLight = true;
         }
     }
 
-    protected override void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.TryGetComponent(out ILightAffectable lightAffectable))
-        {
+    protected override void OnTriggerExit(Collider other) {
+        if (other.gameObject.TryGetComponent(out ILightAffectable lightAffectable)) {
             lightAffectable.IsAffectedByLight = false;
         }
     }
