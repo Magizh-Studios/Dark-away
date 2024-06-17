@@ -22,6 +22,8 @@ public class DoorInteraction : BaseInteractable
 
     private void OnTriggerExit(Collider other)
     {
+        if(!other.gameObject.TryGetComponent(out Player player)) return;
+
         if (isOpen)
             ToggleDoor();
     }
