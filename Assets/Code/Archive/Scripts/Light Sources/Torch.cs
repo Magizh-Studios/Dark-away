@@ -61,10 +61,10 @@ public class Torch : BaseLightSource,IHoldable
 
     protected override void UpdateColliderRadius()
     {
-        float radiusPercentage = currentFuelAmount / FUEL_CAPACITY_MAX;
-        float newRadius = radiusPercentage * colliderMaxRadius;
-        newRadius = Mathf.Max(newRadius, 0f);
-        fOVCollider.Length = newRadius;
+        //float radiusPercentage = currentFuelAmount / FUEL_CAPACITY_MAX;
+        //float newRadius = radiusPercentage * colliderMaxRadius;
+        //newRadius = Mathf.Max(newRadius, 0f);
+        //fOVCollider.Length = newRadius;
     }
     protected override void OnDrawGizmos()
     {
@@ -78,10 +78,19 @@ public class Torch : BaseLightSource,IHoldable
 
     protected override void OnTriggerStay(Collider other) {
         if (other.gameObject.TryGetComponent(out ILightAffectable lightAffectable)) {
-            lightAffectable.IsAffectedByLight = true;
+            float distance = Vector3.Distance(other.gameObject.transform.position , transform.position);
+
+            if(distance < GetLightDistance()) {
+                lightAffectable.IsAffectedByLight = true;
+            }
         }
     }
 
+    private float GetLightDistance() {
+        float radiusPercentage = currentFuelAmount / FUEL_CAPACITY_MAX;
+        float newRadius = radiusPercentage * colliderMaxRadius;
+        return Mathf.Max(newRadius, 0f);
+    }
     protected override void OnTriggerExit(Collider other) {
         if (other.gameObject.TryGetComponent(out ILightAffectable lightAffectable)) {
             lightAffectable.IsAffectedByLight = false;
