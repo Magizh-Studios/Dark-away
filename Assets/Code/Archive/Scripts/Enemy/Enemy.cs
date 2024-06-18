@@ -1,14 +1,22 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour, ILightAffectable
 {
+    public static Enemy Instance { get; private set; }
+
+
     private StateMachine stateMachine;
+
+    public CircleManager TEST_CircleManager;
+
     public Transform playerTransform = null;
     public float attackRadius = 1f;
     public float patrolRadius = 10f;
     public float sightRadius = 5f;
+    public float fovThreshold = 2f;
 
     public float enemyNormalSpeed = 5f;
     public float enemySprintSpeed = 10f;
@@ -17,6 +25,8 @@ public class Enemy : MonoBehaviour, ILightAffectable
     public LayerMask sightLayer;
 
     private NavMeshAgent agent;
+    private Vector3 target;
+    private Action OnPlayerReached;
 
     [SerializeField] private bool isAffectedByLight;
     public bool IsAffectedByLight
@@ -46,6 +56,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
 
     private void Awake()
     {
+        Instance = this;
         agent = GetComponent<NavMeshAgent>();
 
         idleState = new IdleState(this);
@@ -64,18 +75,32 @@ public class Enemy : MonoBehaviour, ILightAffectable
     private void InitializeStateMachine()
     {
         stateMachine = new StateMachine();
-        stateMachine?.SetState(chasingState); // This One Called Enter State And Also Exit
+        stateMachine?.SetState(patrolState); // This One Called Enter State And Also Exit
     }
 
     protected void Update()
     {
         stateMachine?.Update();                // This One Called frame Per Second Keep Updating State MAchin's Upadete State
+
+        if(target != Vector3.zero) {
+            agent.SetDestination(target);
+
+            if(agent.remainingDistance < 0.1f && !agent.pathPending) {
+                target = Vector3.zero;
+                OnPlayerReached?.Invoke();
+            }
+        }
     }
 
     public bool IsCrawling() => agent.velocity.magnitude > 0;
 
     public float GetCurrentSpeed() => agent.velocity.magnitude;
     public float GetSprintSpeed() => enemySprintSpeed;
+
+    public void SetDestination(Vector3 target,Action OnPlayerReached = null) {
+        this.target = target;
+        this.OnPlayerReached = OnPlayerReached;
+    }
 
     [Serializable]
     private class IdleState : IState
@@ -119,56 +144,72 @@ public class Enemy : MonoBehaviour, ILightAffectable
 
     [Serializable]
     private class PatrolState : IState
-    {
+    {    
         private Enemy enemy;
         protected Collider[] colliders = new Collider[5];
-
+        private int colliderCount = 0;
         public PatrolState(Enemy enemy)
         {
             this.enemy = enemy;
         }
-        public void Enter()
-        {
+        public void Enter() {
             Debug.Log("Enemy Entered Patrol");
-            SetRandomDestination();
+
+            MoveToNextFarthestPoint();
         }
+
+        private void MoveToNextFarthestPoint() {
+            PathNode farthestPathNode = enemy.TEST_CircleManager.GetFarthestPathNodeNotInspected(enemy.transform.position);
+
+            if (farthestPathNode != null) {
+                enemy.SetDestination(farthestPathNode.transform.position, () =>
+                {
+                    farthestPathNode.InspectedArea = true;
+                    // Move to the next farthest point after reaching the current one
+                    MoveToNextFarthestPoint();
+                });
+            }
+            else {
+                //want to reset
+                Debug.Log("No more uninspected farthest points available.");
+            }
+        }
+
         public void Update()
         {
-            int colliderCount = Physics.OverlapSphereNonAlloc(enemy.transform.position, enemy.sightRadius, colliders);
-            // Check if reached destination
-            Debug.Log("Colliders Count On Patrol " + colliderCount);
-            if (!enemy.agent.pathPending && enemy.agent.remainingDistance < 0.1f)
-            {
-                // If patrol duration reached, set a new destination
-                SetRandomDestination();
-            }
+            colliderCount = Physics.OverlapSphereNonAlloc(enemy.transform.position, enemy.sightRadius, colliders);
+            //Debug.Log("Colliders Count On Patrol " + colliderCount);
+            if (colliderCount > 0) {
 
-            if (colliderCount > 0 && colliders[0].gameObject.TryGetComponent(out Player player))
-            {
-                // Player Entered Radius
-                enemy.stateMachine.SetState(new ChasingState(enemy));
+                HandlePlayerDetection();
+
+                HandlePathNodeDEtection();
             }
         }
 
-        private void SetRandomDestination()
-        {
-            // Set a random destination within the specified radius
-            Vector3 randomPosition = GetRandomNavMeshPointWithinRadius(enemy.transform.position, enemy.patrolRadius);
-            enemy.agent.SetDestination(randomPosition);
+        private void HandlePlayerDetection() {
+
+            for (int i = 0; i < colliderCount; i++) {
+                if (colliders[i].gameObject.TryGetComponent(out Player _)) {
+                    // Player Entered Radius
+                    enemy.stateMachine.SetState(enemy.chasingState);
+                }
+            }
         }
 
-        private Vector3 GetRandomNavMeshPointWithinRadius(Vector3 center, float radius)
-        {
-            // Generate a random direction within a circle
-            Vector2 randomDirection = UnityEngine.Random.insideUnitCircle * radius;
+        private void HandlePathNodeDEtection() {
 
-            // Convert the 2D random direction to 3D
-            Vector3 randomPosition = new Vector3(randomDirection.x, 0f, randomDirection.y) + center;
+            foreach (var nodeCollider in colliders) {
+                if (nodeCollider.TryGetComponent(out PathNode pathNode) && !pathNode.InspectedArea) {
+                    Vector3 directionToNode = (pathNode.transform.position - enemy.transform.position).normalized;
+                    float angleToNode = Vector3.Angle(enemy.transform.forward, directionToNode);
 
-            // Sample the nearest point on the NavMesh
-            NavMesh.SamplePosition(randomPosition, out NavMeshHit hit, radius, NavMesh.AllAreas);
-
-            return hit.position;
+                    if (angleToNode < enemy.sightRadius / enemy.fovThreshold) // assuming sightRadius is also used as FOV angle here
+                    {
+                        pathNode.InspectedArea = true;
+                    }
+                }
+            }
         }
 
         public void Exit()
