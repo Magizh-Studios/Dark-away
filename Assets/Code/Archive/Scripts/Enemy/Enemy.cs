@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class Enemy : MonoBehaviour, ILightAffectable
 {
@@ -20,6 +21,7 @@ public class Enemy : MonoBehaviour, ILightAffectable
 
     public float enemyNormalSpeed = 5f;
     public float enemySprintSpeed = 10f;
+    public float speedIncreaseRatio = 0.8f;
     public float slowDownDistanceThreshold = 5;
 
     public LayerMask sightLayer;
@@ -84,12 +86,23 @@ public class Enemy : MonoBehaviour, ILightAffectable
 
         if(target != Vector3.zero) {
             agent.SetDestination(target);
+            agent.speed += Time.deltaTime * speedIncreaseRatio;
 
-            if(agent.remainingDistance < 0.1f && !agent.pathPending) {
+            float distance = Vector3.Distance(transform.position, target);
+            if (distance < slowDownDistanceThreshold) {
+                // Calculate the speed based on the distance to the target
+                float lerpedSpeed = Mathf.Lerp(0, enemySprintSpeed, distance / slowDownDistanceThreshold);
+                agent.speed = lerpedSpeed;
+            }
+
+            if (agent.remainingDistance < 0.1f && !agent.pathPending) {
                 target = Vector3.zero;
                 OnPlayerReached?.Invoke();
+                agent.speed = enemyNormalSpeed;
             }
         }
+
+        agent.speed = Mathf.Clamp(agent.speed, enemyNormalSpeed, enemySprintSpeed);
     }
 
     public bool IsCrawling() => agent.velocity.magnitude > 0;
@@ -229,7 +242,6 @@ public class Enemy : MonoBehaviour, ILightAffectable
         public ChasingState(Enemy enemy) {
             this.enemy = enemy;
             target = null;
-            enemy.agent.speed = enemy.enemySprintSpeed;
         }
         public void Enter() {
             Debug.Log("Enemy Entered Chasing State");
@@ -265,7 +277,6 @@ public class Enemy : MonoBehaviour, ILightAffectable
         }
 
         public void Exit() {
-            enemy.agent.speed = enemy.enemyNormalSpeed;
         }
     }
 
