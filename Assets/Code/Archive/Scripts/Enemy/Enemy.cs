@@ -6,6 +6,8 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour, ILightAffectable {
     public static Enemy Instance { get; private set; }
 
+    public event EventHandler OnEnemyEnteredGiveUpState;
+
     private CircleManager TEST_CircleManager;
     private Transform playerTransform = null;
 
@@ -20,12 +22,16 @@ public class Enemy : MonoBehaviour, ILightAffectable {
     [SerializeField] private float slowDownDistanceThreshold = 5;
     [SerializeField] private float rotationSpeed = 5f;
     [SerializeField] private LayerMask sightLayer;
+    [SerializeField] private bool isAffectedByLight;
 
     private NavMeshAgent agent;
     private Transform targetTransform;
     private Action OnPlayerReached;
 
-    [SerializeField] private bool isAffectedByLight;
+    private float currentAngerLevel = 0;
+    [SerializeField] private float angerLevelMax = 10f;
+    private bool isAngry = false;
+    [SerializeField] private float angryIncreaseRatio = 0.4f;
 
     public bool IsAffectedByLight {
         get => isAffectedByLight;
@@ -81,6 +87,20 @@ public class Enemy : MonoBehaviour, ILightAffectable {
                 break;
         }
 
+        if(targetTransform != null) {
+
+            agent.SetDestination(targetTransform.position);
+            agent.speed += Time.deltaTime * speedIncreaseRatio;
+        }
+
+        HandleSlowDown();
+
+        HandleRotation();
+
+        CheckTargetReached();
+
+        
+
         agent.speed = Mathf.Clamp(agent.speed, enemyNormalSpeed, enemySprintSpeed);
         //Debug.Log($"Current Agent Speed: {agent.speed}"); // Debugging current speed
     }
@@ -130,44 +150,68 @@ public class Enemy : MonoBehaviour, ILightAffectable {
 
     private void HandleChasingState() {
 
-        if (agent.pathStatus == NavMeshPathStatus.PathInvalid || agent.pathStatus == NavMeshPathStatus.PathPartial) {
-            currentState = State.GiveUp; 
-            return;
-        }
-
         if(targetTransform == null) {
             targetTransform = playerTransform;
         }
         
         if (targetTransform != null) {
-            agent.SetDestination(targetTransform.position);
-            agent.speed += Time.deltaTime * speedIncreaseRatio;
-            //Debug.Log($"Speed after increase: {agent.speed}"); // Debugging speed increase
-
-            float distance = Vector3.Distance(transform.position, targetTransform.position);
-            if (distance < slowDownDistanceThreshold) {
-                float lerpedSpeed = Mathf.Lerp(0, enemySprintSpeed, distance / slowDownDistanceThreshold);
-                agent.speed = lerpedSpeed;
-            }
 
             if (Vector3.Distance(transform.position, targetTransform.position) < attackRadius) {
                 currentState = State.Attack;
             }
 
-            // Rotation logic
-            Vector3 direction = (targetTransform.position - transform.position).normalized;
-            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-            transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+            if (Vector3.Distance(transform.position, targetTransform.position) < sightRadius) {
+                isAngry = true;
+            }
+            else {
+                currentAngerLevel = 0;
+            }
 
-            if (agent.remainingDistance < 0.1f && !agent.pathPending) {
-                targetTransform = null;
-                OnPlayerReached?.Invoke();
-                agent.speed = enemyNormalSpeed;
+            if (isAngry) {
+                currentAngerLevel += Time.deltaTime * angryIncreaseRatio;
+                if (currentAngerLevel > angerLevelMax) {
+                    currentAngerLevel = 0;
+                    isAngry = false;
+
+                    targetTransform = null;
+                    OnEnemyEnteredGiveUpState?.Invoke(this, EventArgs.Empty);
+
+                    SetState(State.GiveUp);
+                }
             }
         }
 
-   
+
     }
+
+    private void HandleRotation() {
+        if(targetTransform == null) return;
+
+        // Rotation logic
+        Vector3 direction = (targetTransform.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+    }
+
+    private void HandleSlowDown() {
+        if (targetTransform == null) return;
+
+        float distance = Vector3.Distance(transform.position, targetTransform.position);
+        if (distance < slowDownDistanceThreshold) {
+            float lerpedSpeed = Mathf.Lerp(0, enemySprintSpeed, distance / slowDownDistanceThreshold);
+            agent.speed = lerpedSpeed;
+        }
+    }
+
+    private void CheckTargetReached() {
+        if (agent.remainingDistance < 0.1f && !agent.pathPending) {
+            targetTransform = null;
+            OnPlayerReached?.Invoke();
+            agent.speed = enemyNormalSpeed;
+        }
+    }
+
+
 
     private void HandleAttackState() {
         // Implement attack logic
@@ -191,13 +235,21 @@ public class Enemy : MonoBehaviour, ILightAffectable {
     }
 
     private void HandleGiveUpState() {
-        Debug.Log("Enemy Entered GiveUpState");
+        Debug.Log("Enemy Entered GiveUpState Play Roar");
     }
 
+    public void RunWay() { //referenced On Unity Event
+        if (targetTransform == null) {
+            Setarget(EnemySpawner.Instance.GetRandomHidePosition(), () => {
+                gameObject.SetActive(false);
+            });
+        }
+    }
 
     public void Setarget(Transform targetTransform, Action OnPlayerReached = null) {
         this.targetTransform = targetTransform;
         this.OnPlayerReached = OnPlayerReached;
+        agent.speed = enemyNormalSpeed;
     }
 
     public void SetState(State state) {

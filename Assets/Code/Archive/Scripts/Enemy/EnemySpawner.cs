@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -18,5 +19,9 @@ public class EnemySpawner : MonoBehaviour
     public void SpawnEnemyAtEntrance() {
         Enemy enemy = Instantiate(enemyPrefab, entrancePosTransform.position, Quaternion.identity).GetComponent<Enemy>();
         enemy.SetState(Enemy.State.Chasing);
+    }
+
+    public Transform GetRandomHidePosition() {
+        return entrancePosTransform; // For Test
     }
 }

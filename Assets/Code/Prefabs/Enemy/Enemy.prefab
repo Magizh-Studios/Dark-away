@@ -63,6 +63,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 768
   isAffectedByLight: 0
+  angerLevelMax: 5
+  angryIncreaseRatio: 0.4
 --- !u!114 &7544398639716241668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2064,7 +2066,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 53bbc9c3ca9c33e4c9e1c0b58ea44b86,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9204502540634784874}
   m_SourcePrefab: {fileID: 100100000, guid: 53bbc9c3ca9c33e4c9e1c0b58ea44b86, type: 3}
 --- !u!4 &6022259438552699670 stripped
 Transform:
@@ -2072,3 +2078,38 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 6060125944005276925}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6402022596402809260 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 53bbc9c3ca9c33e4c9e1c0b58ea44b86,
+    type: 3}
+  m_PrefabInstance: {fileID: 6060125944005276925}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &9204502540634784874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6402022596402809260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe65c818785742141a274e45b45b1a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eventDatas:
+  - Event:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 9152408697740114427}
+          m_TargetAssemblyTypeName: Enemy, Assembly-CSharp
+          m_MethodName: RunWay
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    EventName: Roar
