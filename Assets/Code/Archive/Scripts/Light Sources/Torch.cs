@@ -11,6 +11,8 @@ public class Torch : BaseLightSource,IHoldable
 
     public FOVCollider FOVCollider => fOVCollider;
 
+    public bool CanHoldTorch = true;
+
     protected override void Awake()
     {
         base.Awake();
@@ -19,7 +21,13 @@ public class Torch : BaseLightSource,IHoldable
 
     private void Start()
     {
-        PlayerIk.Instance.SetHoldingObject(this);
+
+        PlayerIk.Instance.SetHoldingObject(CanHoldTorch ? this : null);
+
+        if(!CanHoldTorch) {
+            Hide();
+        }
+
         EquipHandler.Instance.OnPlayerHoldingObject += EquipHandler_OnPlayerHoldingObject;
     }
 
@@ -30,8 +38,7 @@ public class Torch : BaseLightSource,IHoldable
             Hide();
         }
 
-        if(holdable == null)
-        {
+        if (holdable == null) {
             Show();
             PlayerIk.Instance.SetHoldingObject(this);
         }
