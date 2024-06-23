@@ -43,7 +43,7 @@ public class PlayerIk : MonoBehaviour
     {
         currentHoldingObject = holdable;
 
-        Debug.Log($"Current Held Object {currentHoldingObject}");
+        //Debug.Log($"Current Held Object {currentHoldingObject}");
 
         UpdateRigVisual();
     }

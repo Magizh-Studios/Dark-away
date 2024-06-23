@@ -58,6 +58,7 @@ MonoBehaviour:
   enemySprintSpeed: 10
   speedIncreaseRatio: 0.8
   slowDownDistanceThreshold: 10
+  rotationSpeed: 5
   sightLayer:
     serializedVersion: 2
     m_Bits: 768
@@ -84,17 +85,17 @@ NavMeshAgent:
   m_GameObject: {fileID: 7169438306255694967}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.4
+  m_Radius: 1
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 150
-  m_StoppingDistance: 1.5
+  m_StoppingDistance: 0.1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 1.44
-  m_BaseOffset: 0.68
+  m_Height: 1.02
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!54 &3630118872608555160
@@ -143,10 +144,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.65
+  m_Radius: 0.5387636
+  m_Height: 1.4763237
   m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0.31}
+  m_Center: {x: -0.0000007136305, y: 0.5631166, z: 0.1716671}
 --- !u!1001 &6060125944005276925
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -248,7 +249,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 53bbc9c3ca9c33e4c9e1c0b58ea44b86,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.78
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 53bbc9c3ca9c33e4c9e1c0b58ea44b86,
         type: 3}

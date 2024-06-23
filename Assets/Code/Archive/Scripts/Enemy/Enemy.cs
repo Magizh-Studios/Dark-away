@@ -18,6 +18,7 @@ public class Enemy : MonoBehaviour, ILightAffectable {
     [SerializeField] private float enemySprintSpeed = 10f;
     [SerializeField] private float speedIncreaseRatio = 0.8f;
     [SerializeField] private float slowDownDistanceThreshold = 5;
+    [SerializeField] private float rotationSpeed = 5f;
     [SerializeField] private LayerMask sightLayer;
 
     private NavMeshAgent agent;
@@ -25,6 +26,7 @@ public class Enemy : MonoBehaviour, ILightAffectable {
     private Action OnPlayerReached;
 
     [SerializeField] private bool isAffectedByLight;
+
     public bool IsAffectedByLight {
         get => isAffectedByLight;
         set {
@@ -41,7 +43,8 @@ public class Enemy : MonoBehaviour, ILightAffectable {
         Chasing,
         Attack,
         Scared,
-        WaitingForTime
+        WaitingForTime,
+        GiveUp
     }
 
     private void Awake() {
@@ -73,12 +76,16 @@ public class Enemy : MonoBehaviour, ILightAffectable {
             case State.WaitingForTime:
                 HandleWaitingForTimeState();
                 break;
+            case State.GiveUp:
+                HandleGiveUpState();
+                break;
         }
 
         agent.speed = Mathf.Clamp(agent.speed, enemyNormalSpeed, enemySprintSpeed);
-        Debug.Log($"Current Agent Speed: {agent.speed}"); // Debugging current speed
+        //Debug.Log($"Current Agent Speed: {agent.speed}"); // Debugging current speed
     }
 
+  
     private void HandleIdleState() {
         Collider[] colliders = Physics.OverlapSphere(transform.position, sightRadius, sightLayer);
         foreach (var collider in colliders) {
@@ -123,18 +130,34 @@ public class Enemy : MonoBehaviour, ILightAffectable {
 
     private void HandleChasingState() {
 
-        targetTransform = playerTransform;
+        if (agent.pathStatus == NavMeshPathStatus.PathInvalid || agent.pathStatus == NavMeshPathStatus.PathPartial) {
+            currentState = State.GiveUp; 
+            return;
+        }
 
+        if(targetTransform == null) {
+            targetTransform = playerTransform;
+        }
+        
         if (targetTransform != null) {
             agent.SetDestination(targetTransform.position);
             agent.speed += Time.deltaTime * speedIncreaseRatio;
-            Debug.Log($"Speed after increase: {agent.speed}"); // Debugging speed increase
+            //Debug.Log($"Speed after increase: {agent.speed}"); // Debugging speed increase
 
             float distance = Vector3.Distance(transform.position, targetTransform.position);
             if (distance < slowDownDistanceThreshold) {
                 float lerpedSpeed = Mathf.Lerp(0, enemySprintSpeed, distance / slowDownDistanceThreshold);
                 agent.speed = lerpedSpeed;
             }
+
+            if (Vector3.Distance(transform.position, targetTransform.position) < attackRadius) {
+                currentState = State.Attack;
+            }
+
+            // Rotation logic
+            Vector3 direction = (targetTransform.position - transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
 
             if (agent.remainingDistance < 0.1f && !agent.pathPending) {
                 targetTransform = null;
@@ -143,18 +166,17 @@ public class Enemy : MonoBehaviour, ILightAffectable {
             }
         }
 
-        if (Vector3.Distance(transform.position, playerTransform.position) < attackRadius) {
-            currentState = State.Attack;
-        }
+   
     }
 
     private void HandleAttackState() {
         // Implement attack logic
+        Debug.Log("enemy attcked");
     }
 
     private void HandleScaredState() {
         agent.speed = enemySprintSpeed;
-        Debug.Log($"Speed in scared state: {agent.speed}"); // Debugging speed in scared state
+        //Debug.Log($"Speed in scared state: {agent.speed}"); // Debugging speed in scared state
         if (!isAffectedByLight) {
             currentState = State.Idle;
         }
@@ -167,6 +189,11 @@ public class Enemy : MonoBehaviour, ILightAffectable {
             currentState = State.Chasing;
         }
     }
+
+    private void HandleGiveUpState() {
+        Debug.Log("Enemy Entered GiveUpState");
+    }
+
 
     public void Setarget(Transform targetTransform, Action OnPlayerReached = null) {
         this.targetTransform = targetTransform;
