@@ -16,7 +16,7 @@ public class EnemyAnimation : MonoBehaviour {
     }
 
     private void Update() {
-        animator.SetFloat(SPEED_BLEND, Mathf.Clamp01(enemy.GetCurrentSpeed() / enemy.GetSprintSpeed()));
+        animator.SetFloat(SPEED_BLEND, Mathf.Clamp01(enemy.GetCurrentSpeed() / enemy.GetMaxSpeed()));
 
         if (enemy.IsAffectedByLight) {
             targetLayerWeight = 1f;
