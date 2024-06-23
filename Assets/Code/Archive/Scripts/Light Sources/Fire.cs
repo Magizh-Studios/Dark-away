@@ -16,7 +16,7 @@ public class Fire : BaseLightSource
     private void UpdateFireNavMesh()
     {
         float intensityPercentage = currentFuelAmount / FUEL_CAPACITY_MAX;
-        float newIntensity = intensityPercentage * 3;
+        float newIntensity = intensityPercentage * colliderMaxRadius;
         newIntensity = Mathf.Max(newIntensity, 0f);
         navMeshObstacle.radius = newIntensity;
     }
@@ -24,8 +24,11 @@ public class Fire : BaseLightSource
     private void UpdateFireVisual()
     {
         float intensityPercentage = currentFuelAmount / FUEL_CAPACITY_MAX;
-        float newIntensity = intensityPercentage * 3;
+        float newIntensity = intensityPercentage * colliderMaxRadius;
         newIntensity = Mathf.Max(newIntensity, 0f);
         fireParticleSystem.startLifetime = newIntensity;
+    }
+    protected override void OnDrawGizmos() {
+       
     }
 }

@@ -8,19 +8,19 @@ public abstract class BaseLightSource : MonoBehaviour
     [SerializeField] protected float fuelDecreaseSpeed = 2f;
 
     public readonly float FUEL_CAPACITY_MAX = 100f;
-    protected float currentFuelAmount = 0f;
+    [SerializeField] protected float currentFuelAmount = 0f;
 
     public float GetCurrenFuelAmount()
     {
         return currentFuelAmount;
     }
 
-    protected float lightMaxIntencity;
-    protected float colliderMaxRadius;
-    protected bool isWorking = false;
-    protected bool CanUse = false;
+    [SerializeField] protected float lightMaxIntencity;
+    [SerializeField] protected float colliderMaxRadius;
+    [SerializeField] protected bool isWorking = false;
+    [SerializeField] protected bool CanUse = false;
 
-    protected bool isPlayerInsideSafeZone = false;
+    [SerializeField] protected bool isPlayerInsideSafeZone = false;
 
     protected SphereCollider sphereCollider;
     protected virtual void Awake()
