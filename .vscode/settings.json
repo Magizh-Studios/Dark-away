@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Dark Away.sln"
+    "dotnet.defaultSolution": "Dark-away.sln"
 }
